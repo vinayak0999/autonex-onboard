@@ -1,7 +1,10 @@
 import React from 'react';
+import { useLocation } from 'wouter';
 import { BookOpen, MessageCircle, ClipboardCheck } from 'lucide-react';
 
 const HomePage = () => {
+  const [, navigate] = useLocation();
+
   const sections = [
     {
       id: 'guidelines',
@@ -25,16 +28,16 @@ const HomePage = () => {
       description: 'Evaluate your understanding with our interactive assessment and track your progress.',
       icon: ClipboardCheck,
       color: 'from-[#163791] to-[#62AADE]',
-      link: '/test'
+      link: 'https://testurself-frontend.vercel.app/'
     }
   ];
 
   const handleNavigate = (link) => {
-    // Navigation logic - replace with your routing
-    console.log('Navigating to:', link);
-    // For React Router: navigate(link)
-    // For Next.js: router.push(link)
-    // window.location.href = link;
+    if (link.startsWith('http')) {
+      window.open(link, '_blank');
+    } else {
+      navigate(link);
+    }
   };
 
   return (

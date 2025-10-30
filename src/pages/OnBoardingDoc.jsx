@@ -2,41 +2,218 @@ import React, { useState } from 'react';
 
 const OnboardingUI = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 8;
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ type: '', url: '', title: '' });
+  const totalPages = 11; // Adjusted to 11 to fit all PDF content
 
-  // Sample content for each page
+  // Content from the PDF document
   const pageContent = {
     1: {
-      title: "Welcome to Our Company",
-      content: "Welcome to the onboarding process. This guide will help you understand our company culture, values, and processes. Please read through each section carefully."
+      title: "What You Will Do", // 
+      content: `There is a client model that performs tasks based on the given prompt. 
+The model goes through different websites, checking and performing actions as required by the task. 
+It completes the process step-by-step, starting with its thoughts (what it plans to do next) and continuing through actions until it concludes with a final output. 
+• During this step-by-step execution, the model might make mistakes or errors in its reasoning or actions. 
+• These mistakes can cause the trajectory to divert from the correct path, leading to task failure. 
+
+Your role as an annotator is to: 
+• Review the entire trajectory of the model (its thoughts and actions). 
+• Identify where the error happened and what type of error it is using the Error Categorization (EC) document. 
+• Mark the main cause of failure — the specific error that led the model to go wrong. 
+• If the model succeeded, ensure the process was correct and complete. 
+• If it failed, find and label the exact reason for failure, not just the symptoms. 
+
+The goal is to make sure that each model trajectory is evaluated correctly, so that the model can be improved and retrained based on your feedback. `
     },
     2: {
-      title: "Company Overview",
-      content: "Our company was founded with a vision to revolutionize the industry. We believe in innovation, collaboration, and excellence in everything we do."
+      title: "Reading the Error Categorization Doc", // 
+      content: `Why You Should Read the EC Example Library 
+
+The EC Example Library explains all the error types a model can make while performing a task. 
+It helps you learn how to identify and mark errors correctly during annotation. 
+
+The document includes: 
+➤ Definitions of each error 
+➤ Key points to check before marking 
+➤ Examples of correct and incorrect cases 
+
+It covers all the main areas from 
+Prompt Errors, 
+Incorrect / Missed Model Actions, 
+Incorrect / Missed Model Thoughts, 
+Output errors, 
+Infrastructure Errors(Non-Model Fault Errors), Tool Error 
+
+Reading it will help you make accurate, consistent, and confident decisions while evaluating model trajectories. `,
+      docs: [
+        { name: 'EC Example Library Doc', url: 'https://docs.google.com/document/d/1yamEzJSFuvaKpWvDoB4mVGo14eMCwUtEFdkr5_8w27s/edit?tab=t.0#heading=h.dwbjqcnuj2m' }, // 
+        { name: 'Autonex guidelines / steps by EC', url: 'https://docs.google.com/document/d/1tLN9XC66BWfWU_2YMv3fM7M14B4xFal_rlrbj34Muzs/edit?tab=t.0#heading=h.qkseevawdd8' } // 
+      ]
     },
     3: {
-      title: "Our Mission & Vision",
-      content: "Our mission is to deliver exceptional value to our customers while fostering a culture of continuous learning and growth for our team members."
+      title: "Cases", // 
+      content: `Depending on the task, error, and model's output, you have to decide the final conclusion of the task. 
+
+There are four possible cases: 
+
+1. Success - Task completed correctly. 
+
+2. Failure - Task not completed or result incorrect. 
+
+3. Cannot Be Determined - Task can't be verified due to missing or outdated info. 
+
+4. Accidental Success – Correct result but achieved by chance or wrong reasoning. 
+      
+The following table: `,
+      image: 'img1' // Placeholder for the table 
     },
     4: {
-      title: "Core Values",
-      content: "Integrity, Innovation, Collaboration, Excellence, and Customer Focus are the five pillars that guide our daily operations and decision-making."
+      title: "Task Status Definitions", // Title for the table
+      content: `Task Status | Definition | An efficient way of writing a status explanation 
+
+FAILURE:
+The prompt requirements are not met. The model's summary includes incorrect, hallucinated, or misleading information or links. Any mistake in the output must result in marking this as a failure. When the model says, 'it couldn't do the process, mark the task as failure' 
+
+• Clearly state the number of results returned by the model (if applicable) 
+• Explain how the identified error(s) impacted the model's trajectory and final output. 
+• Highlight the discrepancy between the model output and manual verification. 
+• End with a conclusive statement confirming the task is a "Failure". 
+
+SUCCESS:
+The prompt requirements are fully satisfied. The content in the summary is completely accurate and verifiable. 
+
+• Mention the number of results generated by the model (if applicable). 
+• Briefly explain how the model fulfilled the prompt requirements. 
+• Support the result using manual verification evidence. 
+• End with a conclusive statement confirming the task is a "Success". 
+
+ACCIDENTAL SUCCESS:
+Cases where the model returns zero results without conducting thorough research or following the expected trajectory, but manual verification confirms that zero results are indeed the correct answer. 
+
+• Mention that the model gave 0 results 
+• Briefly explain how the model failed to follow the expected reasoning or action steps. 
+• Explain how manual verification confirms the absence of results. 
+• Conclusive statement confirming the task is an "Accidental Success". 
+
+CANNOT BE DETERMINED:
+Applicable when the prompt contains requirements that the model cannot fulfill due to technical limitations or ambiguity. Common scenarios include: prompts requiring audio/video interpretation, booking tickets for past events, logging into private accounts, or when the prompt lacks sufficient clarity. 
+
+• Mention the number of results, if any, returned by the model 
+• Briefly explain why the prompt is unanswerable or ambiguous 
+• Reference manual verification to confirm the task is indeterminate 
+• Conclusive statement confirming the task status is "Cannot be determined" 
+
+• If the prompt is bad, this default cannot be determined `
     },
     5: {
-      title: "Team Structure",
-      content: "Our organization is structured into various departments including Engineering, Product, Sales, Marketing, and Operations. Each team works collaboratively towards our common goals."
+      title: "What is Critical Error", // 
+      content: `• A Critical Error is the main mistake that caused the model to fail the task. 
+• It is the root cause of the failure — the step where things actually went wrong. 
+• Even if multiple small errors are present, you must find and mark the one key error that directly led to the task failure. 
+• Identifying the correct critical error helps ensure accurate evaluation and a clear understanding of why the model failed. 
+• Critical Error can be one or more than one 
+• Critical Error is same as the primary error (Both are same) 
+
+How to write the Critical error and the Step errors: `,
+      image: 'img2' // Placeholder for the example 
     },
     6: {
-      title: "Work Culture",
-      content: "We promote a flexible and inclusive work environment where every team member's voice is heard and valued. Work-life balance is a priority for us."
+      title: "Trajectory Status", // 
+      content: `• The Trajectory Status represents the overall quality of the model's process (all steps except the final one). 
+
+Marking Rules: 
+
+• If Task Status = Success → Select Success 
+
+• If Task Status = Cannot be Determined → Select Cannot be Determined 
+
+• If Task Status = Failure → 
+  ○ If the critical error is in the last step only (for example, Summarization Failure or Dissatisfactory Output), 
+    → Mark the Trajectory Status as "Success".
+  ○ If the critical error occurs anywhere in the middle or earlier part of the trajectory (i.e., during process steps and not in the final step), 
+    → Mark the Trajectory Status as "Failure". `
     },
     7: {
-      title: "Policies & Guidelines",
-      content: "Please familiarize yourself with our company policies including attendance, leave, code of conduct, and communication guidelines."
+      title: "Auto Eval", // 
+      content: `AutoEval (Automatic Evaluation) is a system that automatically reviews model outputs using predefined rules and logic. 
+
+It helps to speed up evaluations by predicting whether a model's output is Success or Failure. 
+
+AutoEval checks things like: 
+• If the model met the main task requirements. 
+• If key information is missing or incorrect. 
+• If the final output format or reasoning is wrong. 
+
+However, AutoEval is not always 100% accurate — it can miss context or misunderstand certain cases. 
+
+That's why human annotators still review each task to verify or correct AutoEval's decision. 
+
+If the annotator's judgment disagrees with AutoEval, they must recheck carefully and provide reasoning for their decision. `,
+      docs: [
+        { name: 'Autoeval EC (AE EC) Library', url: 'https://docs.google.com/document/d/1GrulVN1bF7erycM0plTt4VNnqhuRfTHhAe47cSb1-r4/edit?tab=t.0#heading=h.7m2r791gohwt' } // 
+      ]
     },
     8: {
-      title: "Getting Started",
-      content: "Congratulations! You've completed the onboarding material. Your manager will guide you through the next steps. Welcome aboard!"
+      title: "Moving Towards Practical Understanding", // 
+      content: `Now that you've learned the basics about the platforms, documentation, and key terms, Let's move to the actual example to understand how everything works together — step by step. 
+
+In this part, you'll see: 
+1. How a task or prompt is given to the model. 
+2. How the model performs actions and generates steps (the trajectory). 
+3. How you, as an annotator, review those steps and identify if any errors occurred. 
+4. How to mark the critical error, decide the task status, and assign the trajectory status. 
+
+This walkthrough will help you understand the complete flow of annotation — from model execution to final evaluation. `
+    },
+    9: {
+      title: "Video 1: Introduction To Encord and Yutori Platforms", // 
+      content: `This video gives a brief introduction to the Yutori and Encord platforms. 
+• You will learn what each platform is used for and how they work together in the annotation process. 
+• It explains: 
+  ○ The purpose of both platforms. 
+  ○ How to navigate through them. 
+  ○ Basic functions like viewing trajectories, marking errors, and submitting evaluations. 
+
+Goal: 
+By the end of this video, you'll understand the role of Yutori and Encord in model evaluation and how to use them effectively during annotation. `,
+      videos: [
+        { name: 'Video 1 - Introduction to Encord', url: 'https://drive.google.com/file/d/1fjbC8MeyBfmUL5ZWofzoR-UXbmSgWEo6/view?usp=drive_link', thumb: 'video1_thumb' } // 
+      ]
+    },
+    10: {
+      title: "Video 2: Reviewing Process For Autonex QC", // 
+      content: `This video explains the step-by-step review process followed in Autonex QC. 
+• You will learn how to check annotations, verify marked errors, and ensure quality and consistency in evaluations. 
+• It covers: 
+  ○ How to open and review trajectories. 
+  ○ How to confirm or correct the annotator's marked errors. 
+  ○ What to look for during Quality Check (QC) — accuracy, reasoning, and alignment with the EC guidelines. 
+
+Exact process for review 
+Goal: 
+By the end of this video, you'll understand how to perform quality checks in Autonex, maintain annotation standards, and provide clear feedback to annotators. `,
+      image: 'img3', // Placeholder for diagram 
+      videos: [
+        { name: 'Video 2 - Autonex QC Reviewing Process', url: 'https://drive.google.com/file/d/1M2xoiXDG30jI_BhO0CfaWRVJVxkPJWl3/view?usp=drive_link', thumb: 'video2_thumb' }, // 
+      ],
+    },
+    11: {
+      title: "Video 3: Finding the Critical Error & Pro Tips", // 
+      content: `Video 3 Finding the Critical Error: 
+This video explains how to identify the Critical Error in a model's trajectory. 
+• You will learn how to trace where the model went wrong and find the main mistake that caused the task to fail. 
+• It covers: 
+  ○ How to review the model's thoughts and actions step-by-step. 
+  ○ How to spot the exact step where the model diverged from the correct path. 
+  ○ How to confirm the Critical Error using the Error Categorization (EC) Library. 
+  ○ How to use the Ctrl+F function to verify the error mistake 
+
+Goal: 
+By the end of this video, you'll know how to track and mark the Critical Error accurately, ensuring each failure is classified based on its true cause. `,
+      videos: [
+        { name: 'Video 3 - Tracking the Critical Error', url: 'https://drive.google.com/file/d/1UqiPQ-0NCNB3ba3g5emssNltapH5Op0j/view?usp=drive_link', thumb: 'video3_thumb' } // 
+      ],
+      proTips: true // 
     }
   };
 
@@ -56,6 +233,16 @@ const OnboardingUI = () => {
     }
   };
 
+  const openModal = (type, url, title) => {
+    setModalContent({ type, url, title });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setModalContent({ type: '', url: '', title: '' });
+  };
+
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
@@ -71,15 +258,15 @@ const OnboardingUI = () => {
           </div>
 
           {/* Page Numbers - Right Side (Absolute positioning) */}
-          <div className="absolute right-4 sm:right-6 lg:right-8 flex items-center gap-2">
-            <span className="text-sm text-gray-500 mr-2 hidden sm:inline">Pages:</span>
+          <div className="absolute right-4 sm:right-6 lg:right-8 flex items-center gap-1 sm:gap-2 overflow-x-auto pb-2">
+            <span className="text-sm text-gray-500 mr-2 hidden sm:inline"></span>
             {[...Array(totalPages)].map((_, index) => {
               const pageNum = index + 1;
               return (
                 <button
                   key={pageNum}
                   onClick={() => handlePageClick(pageNum)}
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-semibold transition-all duration-200 ${
+                  className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-semibold transition-all duration-200 ${
                     currentPage === pageNum
                       ? 'bg-gradient-to-br from-[#163791] to-[#62AADE] text-white shadow-lg shadow-[#62AADE]/50 scale-110'
                       : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 hover:scale-105'
@@ -94,38 +281,135 @@ const OnboardingUI = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 p-8 min-h-[500px]">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 p-6 sm:p-8 min-h-[600px]">
           {/* Page Indicator */}
-          <div className="text-sm text-gray-500 mb-4">
-            Page {currentPage} of {totalPages}
+          <div className="text-sm text-gray-500 mb-6 flex items-center justify-between">
+            <span>Page {currentPage} of {totalPages}</span>
+            <span className="text-[#62AADE]">Workflow for New Joiners</span>
           </div>
 
           {/* Content */}
           <div className="prose prose-invert max-w-none">
-            <h1 className="text-3xl font-bold text-white mb-6">
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#62AADE] to-[#163791] mb-6">
               {pageContent[currentPage].title}
             </h1>
-            <p className="text-lg text-gray-300 leading-relaxed">
+            <div className="text-base text-gray-300 leading-relaxed whitespace-pre-line">
               {pageContent[currentPage].content}
-            </p>
+            </div>
+            
+            {/* Document Links */}
+            {pageContent[currentPage].docs && (
+              <div className="mt-6 space-y-3">
+                {pageContent[currentPage].docs.map((doc, index) => (
+                  <button
+                    key={index}
+                    onClick={() => openModal('doc', doc.url, doc.name)}
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#163791] to-[#62AADE] text-white rounded-lg hover:shadow-lg hover:shadow-[#62AADE]/30 transition-all duration-200"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    View {doc.name}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Image */}
+            {pageContent[currentPage].image && (
+              <div className="mt-6">
+                <button
+                  onClick={() => openModal('image', pageContent[currentPage].image, 'View Image')}
+                  className="w-full bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-[#62AADE] transition-all cursor-pointer"
+                >
+                  <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
+                    <img
+                      src={`/${pageContent[currentPage].image}.png`}
+                      alt="Thumbnail"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                  <p className="text-sm text-gray-400 text-center mt-3">Click to view image</p>
+                </button>
+              </div>
+            )}
+
+            {/* Videos */}
+            {pageContent[currentPage].videos && (
+              <div className="mt-6 space-y-4">
+                {pageContent[currentPage].videos.map((video, index) => (
+                  <button
+                    key={index}
+                    onClick={() => openModal('video', video.url, video.name)}
+                    className="w-full bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-[#62AADE] transition-all cursor-pointer"
+                  >
+                    <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center overflow-hidden relative">
+                      {video.thumb ? (
+                        <img
+                          src={`/${video.thumb}.png`}
+                          alt={video.name}
+                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-[#62AADE]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      )}
+                      {/* Play Icon Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-white/80" fill="currentColor" viewBox="0 0 20 20">
+                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8.002v3.996a1 1 0 001.555.832l3.197-1.997a1 1 0 000-1.664l-3.197-1.997z" clipRule="evenodd" />
+                         </svg>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-300 font-medium text-center mt-3">{video.name}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Pro Tips */}
+            {pageContent[currentPage].proTips && (
+              <div className="mt-8 bg-gradient-to-br from-[#163791]/20 to-[#62AADE]/20 rounded-xl border border-[#62AADE]/30 p-6">
+                <h3 className="text-xl font-bold text-[#62AADE] mb-4">Pro tips</h3> {/* */}
+                <ul className="space-y-2 text-gray-300">
+                  <li>• Task status reasoning and Primary error should be linked (if failure was broken link, find out where the broken link entered the trajectory) </li>
+                  <li>• You are detectives, playing against AI and finding its faults. So need to do it intelligently </li>
+                  <li>• Read the Error Categories document if you have any doubts. Or directly ask the doubts group! </li>
+                  <li>• The yutori platform sometimes doesn't load - use VPN! - setting it to UK </li>
+                  <li>• We work as reviewers, so we need to build that mindset (what value does a reviewer add?) </li>
+                </ul>
+              </div>
+            )}
           </div>
 
-          {/* Additional content space */}
-          <div className="mt-8 p-6 bg-gradient-to-br from-[#163791]/20 to-[#62AADE]/20 rounded-lg border border-[#62AADE]/30">
-            <h3 className="text-lg font-semibold text-[#62AADE] mb-2">
-              Important Note
-            </h3>
-            <p className="text-gray-300">
-              Make sure you understand all the information on this page before proceeding to the next section.
-            </p>
+          {/* Additional info box */}
+          <div className="mt-8 p-5 bg-gradient-to-br from-[#163791]/20 to-[#62AADE]/20 rounded-xl border border-[#62AADE]/30">
+            <div className="flex items-start gap-3">
+              <div className="w-2 h-2 bg-[#62AADE] rounded-full mt-2 flex-shrink-0"></div>
+              <p className="text-gray-300 text-sm">
+                {currentPage === 1 && "Understanding your role as an annotator is crucial for model improvement."}
+                {currentPage === 2 && "The EC Example Library is your most important reference document."}
+                {currentPage === 3 && "These are the four possible outcomes for any task."}
+                {currentPage === 4 && "Clear status definitions help maintain consistency across evaluations."}
+                {currentPage === 5 && "Finding the critical error is key to accurate model evaluation."}
+                {currentPage === 6 && "Trajectory status depends on where the error occurred in the process."}
+                {currentPage === 7 && "Always verify AutoEval's decisions - human judgment is essential."}
+                {currentPage === 8 && "Understanding the complete flow helps you become a better annotator."}
+                {currentPage === 9 && "Watch this tutorial to see the annotation platform in action."}
+                {currentPage === 10 && "Follow this QC process to ensure quality and consistency."}
+                {currentPage === 11 && "Apply these pro tips and learn to find the true cause of failure."}
+              </p>
+            </div>
           </div>
         </div>
       </main>
 
       {/* Navigation Footer */}
-      <footer className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex justify-between items-center">
+      <footer className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex justify-between items-center mb-6">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
@@ -151,15 +435,66 @@ const OnboardingUI = () => {
                 : 'bg-gradient-to-r from-[#163791] to-[#62AADE] text-white hover:shadow-lg hover:shadow-[#62AADE]/30'
             }`}
           >
-            Next →
+            {currentPage === totalPages ? 'Finish' : 'Next →'}
           </button>
         </div>
 
         {/* Footer Text */}
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm text-gray-600">
           Your Onboarding Buddy • Powered by RAG & AI
         </p>
       </footer>
+
+      {/* Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+          <div className="relative w-full h-full max-w-7xl max-h-[95vh] bg-gray-900 rounded-xl shadow-2xl border border-gray-700 flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-800 flex-shrink-0">
+              <h2 className="text-xl font-semibold text-white truncate">
+                {modalContent.title}
+              </h2>
+              <button
+                onClick={closeModal}
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="flex-1 overflow-hidden p-1 sm:p-4">
+              {modalContent.type === 'doc' && (
+                <iframe
+                  src={modalContent.url}
+                  className="w-full h-full rounded-lg bg-white"
+                  title={modalContent.title}
+                />
+              )}
+              {modalContent.type === 'video' && (
+                <iframe
+                  src={modalContent.url.replace('/view?usp=drive_link', '/preview')}
+                  className="w-full h-full rounded-lg"
+                  title={modalContent.title}
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                />
+              )}
+              {modalContent.type === 'image' && (
+                <div className="w-full h-full flex items-center justify-center p-4">
+                  <img
+                    src={`/${modalContent.url}.png`}
+                    alt={modalContent.title}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
