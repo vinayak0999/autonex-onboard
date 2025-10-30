@@ -245,11 +245,16 @@ By the end of this video, you'll know how to track and mark the Critical Error a
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Header */}
+      {/* ========================================================================
+        HEADER FIX: New centered, vertical layout as requested.
+        ========================================================================
+      */}
       <header className="bg-gray-950 border-b border-gray-800 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          {/* Company Logo - Center */}
-          <div className="flex-1 flex justify-center">
+        {/* Main container: column layout, centered items */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col items-center">
+          
+          {/* Top Item (Logo) */}
+          <div className="flex-shrink-0">
             <img 
               src="/logo.png" 
               alt="Company Logo" 
@@ -257,28 +262,36 @@ By the end of this video, you'll know how to track and mark the Critical Error a
             />
           </div>
 
-          {/* Page Numbers - Right Side (Absolute positioning) */}
-          <div className="absolute right-4 sm:right-6 lg:right-8 flex items-center gap-1 sm:gap-2 overflow-x-auto pb-2">
-            <span className="text-sm text-gray-500 mr-2 hidden sm:inline"></span>
-            {[...Array(totalPages)].map((_, index) => {
-              const pageNum = index + 1;
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageClick(pageNum)}
-                  className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-semibold transition-all duration-200 ${
-                    currentPage === pageNum
-                      ? 'bg-gradient-to-br from-[#163791] to-[#62AADE] text-white shadow-lg shadow-[#62AADE]/50 scale-110'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 hover:scale-105'
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
+          {/* Bottom Item (Page Numbers) */}
+          {/* Added mt-4 for space, w-full for overflow handling */}
+          <div className="w-full flex justify-center mt-4">
+            <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-2">
+              <span className="text-sm text-gray-500 mr-2 hidden sm:inline">Pages:</span>
+              {[...Array(totalPages)].map((_, index) => {
+                const pageNum = index + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => handlePageClick(pageNum)}
+                    className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-semibold transition-all duration-200 ${
+                      currentPage === pageNum
+                        ? 'bg-gradient-to-br from-[#163791] to-[#62AADE] text-white shadow-lg shadow-[#62AADE]/50 scale-110'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 hover:scale-105'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>
+      {/* ========================================================================
+        END OF HEADER FIX
+        ========================================================================
+      */}
+
 
       {/* Main Content Area */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
