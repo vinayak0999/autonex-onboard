@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Copy, Check, ImagePlus, X, BookOpen, HelpCircle, FileText } from 'lucide-react'; // Added icons back
 
 // API URL
-const API_URL = 'https://web-production-354e1.up.railway.app/api/v1/query';
+const API_URL = 'http://127.0.0.1:8000/api/v1/query';
 
 export default function ChatbotUI() {
   const [messages, setMessages] = useState([]);
